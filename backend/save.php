@@ -1,13 +1,17 @@
+
 <?php
-$conn = new mysqli("localhost", "postgres", "senha", "linkurto");
+$host = 'localhost';
+$db   = 'linkurto';
+$user = 'postgres';
+$pass = '1234';
+$port = "5432";  // Changed to standard PostgreSQL port
 
-$content = $_POST['content'];
+$conn = pg_connect("host=$host dbname=$db user=$user password=$pass port=$port");
 
-$id = substr(md5(uniqid()), 0, 6);
-
-$stmt = $conn->prepare("INSERT INTO pastes (id, content) VALUES (?, ?)");
-$stmt->bind_param("ss", $id, $content);
-$stmt->execute();
-
-echo "Seu link: <a href='view.php?id=$id'>view.php?id=$id</a>";
+if (!$conn) {
+    echo "Erro ao conectar: " . pg_last_error();  // More detailed error
+} else {
+    echo "Conexão com PostgreSQL bem-sucedida!";
+    // Add code here to interact with your table (e.g., insert data from React)
+}
 ?>

@@ -1,13 +1,23 @@
+
 <?php
-$conn = new mysqli("localhost", "postgres", "senha", "linkurto");
+$host = 'localhost';
+$db   = 'linkurto';
+$user = 'postgres';
+$pass = '1234';
+$port = "5432";
+
+try {
+    $pdo = new PDO("pgsql:host=$host;port=$port;dbname=$db", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Erro ao conectar: " . $e->getMessage());
+}
+
 $id = $_GET['id'];
+$stmt = $pdo->prepare("SELECT content FROM pastes WHERE id = ?");
+$stmt->execute([$id]);
 
-$stmt = $conn->prepare("SELECT content FROM pastes WHERE id = ?");
-$stmt->bind_param("s", $id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($row = $result->fetch_assoc()) {
+if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     echo "<pre>" . htmlspecialchars($row['content']) . "</pre>";
 } else {
     echo "Texto não encontrado!";
