@@ -1,5 +1,5 @@
-
 <?php
+
 $host = 'localhost';
 $db   = 'linkurto';
 $user = 'postgres';
@@ -13,13 +13,18 @@ try {
     die("Erro ao conectar: " . $e->getMessage());
 }
 
-$id = $_GET['id'];
-$stmt = $pdo->prepare("SELECT content FROM pastes WHERE id = ?");
-$stmt->execute([$id]);
+$id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
+ if (!$id){
+    die("ID inválido.");
+ }
 
-if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-    echo "<pre>" . htmlspecialchars($row['content']) . "</pre>";
-} else {
-    echo "Texto não encontrado!";
-}
+ $stmt = $pdo->prepare("SELECT content FROM pastes WHERE id = ?");
+ $stmt->execute([$id]);
+
+ if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    die("<pre>" . htmlspecialchars($row['content']) . "</pre>");
+ } else {
+    die("Texto não encontrado!");
+ }
+ 
 ?>
